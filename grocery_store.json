@@ -1,0 +1,24 @@
+{
+  "Bulgogi Stir Fry": {
+    "Rib eye beef": "0.35kg",
+    "Onion": "0.5",
+    "Green onion": "1"
+  },
+  "Chicken Rice": {
+    "Chicken drumsticks": "2",
+    "Garlic": "1"
+  },
+  "Salmon dinner": {
+    "Salmon fillet": "1",
+    "Asparagus": "0.5"
+  },
+  "Steak dinner": {
+    "Striploin steak": "1",
+    "Green onions": "1",
+    "Coriander": "1"
+  },
+  "Fried rice": {
+    "Chicken Thighs": "2",
+    "Corn and peas": "1"
+  }
+}
