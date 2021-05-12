@@ -1,4 +1,5 @@
 import json
+import random
 
 #initialize dictionary 
 mode_code = "none"
@@ -38,7 +39,25 @@ while (mode_code != "5"):
             print (key,"\n")
     #to receive the actual grocery list
     elif mode == "get_list":
-        num_recipies = input ("How many meals would you like? ")
+        num_recipies = int(input ("How many meals would you like in total? "))
+        recipe_wanted = "none"
+        recipes_entered = 0
+        ingredients_chosen = {}
+
+        #loop through the number of recipes wanted by user
+        while (recipes_entered < num_recipies and recipe_wanted != " "):
+            recipe_wanted = input ("Enter any preferred recipes (space to stop): \n")
+            #store the ingredients need by the desired recepies in ingredients_chosen (dict)
+            for name, ing in recipe_book.items():
+                for key in ing:
+                    if (name == recipe_wanted):
+                        ingredients_chosen[key] = ing[key]
+            print(ingredients_chosen)
+            recipes_entered +=1
+            
+        if (recipes_entered < num_recipies):
+            random_recipe = random.choice(list(recipe_book.keys()))
+            
     #to interact with the json data file that holds the recipes
     elif mode == "get_data":
         option = input ("Press 1 to store, 2 to load:\n")
