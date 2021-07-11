@@ -1,0 +1,118 @@
+#:kivy 2.0.0
+WindowManager:
+    RecipeList:
+    ViewRecipe:
+    AddRecipe:
+
+<AddRecipe>:
+    name: "AddRecipe"
+    recipename: recipename
+    ingredients: ingredients
+    
+    canvas.before:
+        Color: 
+        	rgba: (0.98, 0.98, 0.98, 1)
+        Rectangle:
+        	pos: self.pos
+        	size: self.size
+    FloatLayout:
+        MDRoundFlatButton:
+            padding: "10dp"
+            text: "<"
+            pos_hint: {"center_x": .2, "center_y": .95}
+            font_style: "Subtitle1"
+            text_color: (0,0,0)
+            line_color: (1,1,1)
+            line_width: 1
+            on_release: 
+                app.root.current = "RecipeList"
+                root.manager.transition.direction = "right"
+        MDLabel:
+            font_style: "Subtitle2"
+            text: "Add Recipe"
+            halign: "center"
+            pos_hint: {"center_y": .95}
+
+
+    ScrollView:
+        size_hint_y: 0.8
+        pos_hint: {'x': 0, 'y': .1}
+        do_scroll_x: False
+        do_scroll_y: True
+
+        GridLayout:
+            size: (root.width, root.height)
+            cols:1 
+            size_hint: None, None
+            height: self.minimum_height
+            padding: ['40dp', '30dp', '40dp', '40dp']
+            row_default_height: "70dp"
+    		row_force_default: True
+
+            MDLabel:
+                font_style: "Subtitle2"
+                text: "Recipe Name"
+                halign: "left"
+            MDTextField:
+                mode: "fill"
+                fill_color: (0.9,0.86,0.988,0.6)
+                id: recipename
+            MDLabel:
+                font_style: "Subtitle2"
+                text: "Ingredients"
+                halign: "left"     
+            MDTextField:
+                mode: "fill"
+                fill_color: (0.9,0.86,0.988,0.6)
+                multiline: True
+                id: ingredients
+                max_height: "80dp"
+                hint_text: "Hit enter after each entry!"
+            
+
+    MDFloatingActionButton:
+        icon: "check"
+        elevation: 8
+        md_bg_color: (0.976, 0.43, 0.27, 1)
+        pos_hint: {"center_x": 0.85, "center_y": 0.15}
+        on_release: 
+            root.add_recipe()
+            app.root.current = "RecipeList"
+            root.manager.transition.direction = "left"
+            
+
+<RecipeList>:
+    name: "RecipeList"
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_y: 0.95
+        ScrollView:
+            do_scroll_x: False
+            MDList:        
+                id: container   
+
+    FloatLayout:  
+        MDLabel:
+            font_style: "Subtitle2"
+            text: "All Recipes"
+            halign: "center"
+            pos_hint: {"center_y": .95}
+        MDFillRoundFlatButton:
+            text: "+ Add Recipe"
+            pos_hint: {"center_x": .5, "center_y": .2}
+            theme_text_color: "Custom"
+            text_color: (1,1,1,1)
+            md_bg_color: (0.976,0.43,0.27)
+            on_release: 
+                app.root.current = "AddRecipe"
+                root.manager.transition.direction = "left"
+                
+    
+<ViewRecipe>:
+    name: "ViewRecipe"
+    FloatLayout:  
+        MDLabel:
+            font_style: "Subtitle2"
+            text: "Recipe 1"
+            halign: "center"
+            pos_hint: {"center_y": .95}
