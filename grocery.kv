@@ -1,8 +1,10 @@
 #:kivy 2.0.0
 WindowManager:
+    GenerateList:
     RecipeList:
     ViewRecipe:
     AddRecipe:
+    ListSelection:
 
 <AddRecipe>:
     name: "AddRecipe"
@@ -116,3 +118,69 @@ WindowManager:
             text: "Recipe 1"
             halign: "center"
             pos_hint: {"center_y": .95}
+
+<GenerateList>:
+    name: "GenerateList"
+    FloatLayout:
+        padding: 40
+        MDLabel:
+            font_style: "Subtitle2"
+            text: "Choose recipes to generate your personalized grocery list"
+            halign: "center"
+            pos_hint: {"center_y": .8}
+        Image:
+            source: 'grocerybasket.png'
+            size_hint_x: 0.5
+            size_hint_y: 0.5
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        MDFillRoundFlatButton:
+            text: "Get Started"
+            pos_hint: {"center_x": .5, "center_y": .2}
+            theme_text_color: "Custom"
+            text_color: (1,1,1,1)
+            md_bg_color: (0.976,0.43,0.27)
+            on_release: 
+                app.root.current = "ListSelection"
+                root.manager.transition.direction = "left"
+
+<ListSelection>:
+    name:"ListSelection"
+    FloatLayout:
+        MDCard:
+            size_hint: 0.7, 0.3
+            pos_hint: {"center_x": .5, "center_y": .75}
+            MDLabel:
+                text: "Randomly generate list"
+                pos_hint: {"center_x": .5, "center_y": .6 }
+                halign: "center"
+                font_style: "H6"
+
+        MDCard:
+            size_hint: 0.7, 0.3
+            pos_hint: {"center_x": .5, "center_y": .4}
+            MDLabel:
+                text: "Choose my own recipes"
+                pos_hint: {"center_x": .5, "center_y": .6}
+                halign: "center"
+                font_style: "H6"
+
+        MDFillRoundFlatButton:
+            text: "Next"
+            pos_hint: {"center_x": .5, "center_y": .13}
+            theme_text_color: "Custom"
+            text_color: (1,1,1,1)
+            md_bg_color: (0.976,0.43,0.27)
+            #on_release: 
+                #app.root.current = "ListSelection"
+                #root.manager.transition.direction = "right"
+        MDRoundFlatButton:
+            padding: "10dp"
+            text: "<"
+            pos_hint: {"center_x": .2, "center_y": .95}
+            font_style: "Subtitle1"
+            text_color: (0,0,0)
+            line_color: (1,1,1)
+            line_width: 1
+            on_release: 
+                app.root.current = "GenerateList"
+                root.manager.transition.direction = "right"

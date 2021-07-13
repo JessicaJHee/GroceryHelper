@@ -11,10 +11,13 @@ from kivymd.uix.toolbar import MDToolbar
 from kivy.core.window import Window
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import ObjectProperty
-from kivymd.uix.list import IconRightWidget, TwoLineAvatarIconListItem, OneLineAvatarIconListItem, MDList
+from kivymd.uix.list import TwoLineAvatarIconListItem, OneLineAvatarIconListItem, MDList
 from kivy.clock import Clock
 from kivymd.uix.button import MDRoundFlatButton
 from kivymd.uix.label import MDLabel
+from kivy.uix.checkbox import CheckBox
+from kivymd.uix.selectioncontrol import MDCheckbox
+from kivy.uix.button import Button
 
 Window.clearcolor = (0.98, 0.98, 0.98, 1)
 
@@ -43,7 +46,10 @@ class WindowManager(ScreenManager):
 
 class ViewRecipe(Screen):
     pass
-
+class GenerateList(Screen):
+    pass 
+class ListSelection(Screen):
+    pass
 class RecipeList(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -100,12 +106,8 @@ class NewPage(Screen):
             ,halign = "center"
             ,pos_hint = {"center_y": .95})
         layout.add_widget(recipeName)
-        #add back button
-        button = MDRoundFlatButton(text='<',padding= "10dp",pos_hint= {"center_x": .2, "center_y": .95}, 
-        font_style= "Subtitle1", text_color= (0,0,0), line_color= (1,1,1), line_width= 1)
-        layout.add_widget(button)
-        button.bind(on_release = self.switch_screen)
-        #add ingredient list
+        
+        #load ingredient list
         with open("grocery_store.json") as f:
             recipe_book = json.load(f)
         ingredients_chosen = {}
@@ -113,15 +115,22 @@ class NewPage(Screen):
             for key in ing:
                 if (name == self.name):
                     ingredients_chosen[key] = ing[key] 
+        
         #add ingredients list
-        boxLayout = BoxLayout(orientation = 'vertical', size_hint_y= 0.93) 
-        sv = ScrollView()
-        ml = MDList()
-        sv.add_widget(ml)
+        listLayout = GridLayout(cols=2, padding = 40, row_force_default=True, row_default_height = 45) 
         for key in ingredients_chosen: 
-            ml.add_widget(OneLineAvatarIconListItem(text = key))
-        boxLayout.add_widget(sv)
-        layout.add_widget(boxLayout)
+            listLayout.add_widget(MDLabel(text = key))
+            checkbox = MDCheckbox(on_active = self.checkbox_clicked)
+            listLayout.add_widget(checkbox)
+        #add checkboxes 
+        layout.add_widget(listLayout)
+        #add back button
+        button = MDRoundFlatButton(text='<',padding= "10dp",pos_hint= {"center_x": .2, "center_y": .95}, 
+        font_style= "Subtitle1", text_color= (0,0,0), line_color= (1,1,1), line_width= 1)
+        layout.add_widget(button)
+        button.bind(on_release = self.switch_screen)
+    def checkbox_clicked (self, *args): #value holds the state of the checkbox
+        print ("test")
 
     def switch_screen(self, *args):
         App.get_running_app().root.current = "RecipeList"
