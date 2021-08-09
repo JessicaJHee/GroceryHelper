@@ -4,7 +4,11 @@ WindowManager:
     RecipeList:
     ViewRecipe:
     AddRecipe:
+    RandomRecipe:
+    ChosenRecipe:
     ListSelection:
+    FinalListRand:
+    Explore:
 
 <AddRecipe>:
     name: "AddRecipe"
@@ -27,7 +31,7 @@ WindowManager:
             line_color: (1,1,1)
             line_width: 1
             on_release: 
-                app.root.current = "RecipeList"
+                app.root.current = "GenerateList"
                 root.manager.transition.direction = "right"
         MDLabel:
             font_style: "Subtitle2"
@@ -71,7 +75,6 @@ WindowManager:
                 max_height: "80dp"
                 hint_text: "Hit enter after each entry!"
             
-
     MDFloatingActionButton:
         icon: "check"
         elevation: 8
@@ -79,100 +82,115 @@ WindowManager:
         pos_hint: {"center_x": 0.85, "center_y": 0.15}
         on_release: 
             root.add_recipe()
-            app.root.current = "RecipeList"
+            app.root.current = "GenerateList"
             root.manager.transition.direction = "left"
             
+<GenerateList>: 
+    name:"GenerateList"
+    MDBottomNavigation:
+        MDBottomNavigationItem:
+            name: "GenerateList"
+            icon: "clipboard-list-outline"   
+            text: "Generate"
+            FloatLayout:
+                padding: 40
+                MDLabel:
+                    font_style: "Subtitle2"
+                    text: "Choose recipes to generate your personalized grocery list"
+                    halign: "center"
+                    pos_hint: {"center_y": .8}
+                Image:
+                    source: 'grocerybasket.png'
+                    size_hint_x: 0.5
+                    size_hint_y: 0.5
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                MDFillRoundFlatButton:
+                    text: "Get Started"
+                    pos_hint: {"center_x": .5, "center_y": .18}
+                    theme_text_color: "Custom"
+                    text_color: (1,1,1,1)
+                    md_bg_color: (0.976,0.43,0.27)
+                    on_release: 
+                        app.root.current = "ListSelection"
+                        root.manager.transition.direction = "left"
+                MDLabel:
+                    font_style: "Subtitle2"
+                    text: "View current list"
+                    halign: "center"
+                    pos_hint: {"center_y": .1}
+                    text_color: (0.8,0.8,0.8,1)
+                MDIconButton:
+                    pos_hint: {"center_x": .75,"center_y": .1}
+                    icon: "cart-arrow-right"
+                    user_font_size: "36sp"
+                    theme_text_color: "Custom"
+                    text_color: (0.976,0.43,0.27,1)
+                    on_release:
+                        app.root.current = "FinalListRand"
+                        root.manager.transition.direction = "left"
+        MDBottomNavigationItem:
+            name: "RecipeList"
+            icon: "expand-all-outline"   
+            text: "View All"
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: 0.95
+                ScrollView:
+                    do_scroll_x: False
+                    MDList:        
+                        id: container   
+            FloatLayout:
+                MDLabel:
+                    font_style: "Subtitle2"
+                    text: "All Recipes"
+                    halign: "center"
+                    pos_hint: {"center_y": .95}
+                MDFillRoundFlatButton:
+                    text: "+ Add Recipe"
+                    pos_hint: {"center_x": .5, "center_y": .1}
+                    theme_text_color: "Custom"
+                    text_color: (1,1,1,1)
+                    md_bg_color: (0.976,0.43,0.27)
+                    on_release: 
+                        app.root.current = "AddRecipe"
+                        root.manager.transition.direction = "left"
 
-<RecipeList>:
-    name: "RecipeList"
-    BoxLayout:
-        orientation: "vertical"
-        size_hint_y: 0.95
-        ScrollView:
-            do_scroll_x: False
-            MDList:        
-                id: container   
-
-    FloatLayout:  
+        MDBottomNavigationItem:
+            name: "ExplorePage"
+            icon: "card-search-outline" 
+            text: "Explore" 
+            FloatLayout:
+                MDLabel:
+                    text:"Explore new recipes from all over the world!"
+                    pos_hint: {"center_x": .5, "center_y": .85 }
+                    halign: "center"
+                    font_style: "Subtitle2"
+                Image:
+                    source: 'explore.png'
+                    size_hint: 0.5,0.5
+                    pos_hint: {"center_x": 0.5, "center_y": 0.55}
+                MDFillRoundFlatButton:
+                    text: "Explore"
+                    pos_hint: {"center_x": .5, "center_y": .1}
+                    theme_text_color: "Custom"
+                    text_color: (1,1,1,1)
+                    md_bg_color: (0.976,0.43,0.27)
+                    on_release: 
+                        app.root.current = "Explore"
+                        root.manager.transition.direction = "left"
+                             
+        MDBottomNavigationItem:
+            name: "Profile"
+            icon: "account-circle-outline"  
+            text: "Profile" 
+<Explore>:
+    name: "Explore"
+    FloatLayout:
         MDLabel:
             font_style: "Subtitle2"
-            text: "All Recipes"
+            text: "Popular Recipes"
             halign: "center"
             pos_hint: {"center_y": .95}
-        MDFillRoundFlatButton:
-            text: "+ Add Recipe"
-            pos_hint: {"center_x": .5, "center_y": .2}
-            theme_text_color: "Custom"
-            text_color: (1,1,1,1)
-            md_bg_color: (0.976,0.43,0.27)
-            on_release: 
-                app.root.current = "AddRecipe"
-                root.manager.transition.direction = "left"
-                
-    
-<ViewRecipe>:
-    name: "ViewRecipe"
-    FloatLayout:  
-        MDLabel:
-            font_style: "Subtitle2"
-            text: "Recipe 1"
-            halign: "center"
-            pos_hint: {"center_y": .95}
-
-<GenerateList>:
-    name: "GenerateList"
-    FloatLayout:
-        padding: 40
-        MDLabel:
-            font_style: "Subtitle2"
-            text: "Choose recipes to generate your personalized grocery list"
-            halign: "center"
-            pos_hint: {"center_y": .8}
-        Image:
-            source: 'grocerybasket.png'
-            size_hint_x: 0.5
-            size_hint_y: 0.5
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}
-        MDFillRoundFlatButton:
-            text: "Get Started"
-            pos_hint: {"center_x": .5, "center_y": .2}
-            theme_text_color: "Custom"
-            text_color: (1,1,1,1)
-            md_bg_color: (0.976,0.43,0.27)
-            on_release: 
-                app.root.current = "ListSelection"
-                root.manager.transition.direction = "left"
-
-<ListSelection>:
-    name:"ListSelection"
-    FloatLayout:
-        MDCard:
-            size_hint: 0.7, 0.3
-            pos_hint: {"center_x": .5, "center_y": .75}
-            MDLabel:
-                text: "Randomly generate list"
-                pos_hint: {"center_x": .5, "center_y": .6 }
-                halign: "center"
-                font_style: "H6"
-
-        MDCard:
-            size_hint: 0.7, 0.3
-            pos_hint: {"center_x": .5, "center_y": .4}
-            MDLabel:
-                text: "Choose my own recipes"
-                pos_hint: {"center_x": .5, "center_y": .6}
-                halign: "center"
-                font_style: "H6"
-
-        MDFillRoundFlatButton:
-            text: "Next"
-            pos_hint: {"center_x": .5, "center_y": .13}
-            theme_text_color: "Custom"
-            text_color: (1,1,1,1)
-            md_bg_color: (0.976,0.43,0.27)
-            #on_release: 
-                #app.root.current = "ListSelection"
-                #root.manager.transition.direction = "right"
         MDRoundFlatButton:
             padding: "10dp"
             text: "<"
@@ -184,3 +202,132 @@ WindowManager:
             on_release: 
                 app.root.current = "GenerateList"
                 root.manager.transition.direction = "right"
+
+
+<ListSelection>:
+    name:"ListSelection"
+    FloatLayout:
+        MDCard:
+            size_hint: 0.7, 0.4
+            pos_hint: {"center_x": .5, "center_y": .7}
+            MDLabel:
+                text: "Randomly generate list"
+                pos_hint: {"center_x": .5, "center_y": .85 }
+                halign: "center"
+                font_style: "Subtitle2"
+        Image:
+            source: 'dice.png'
+            size_hint: 0.2,0.2
+            pos_hint: {"center_x": 0.5, "center_y": 0.7}
+        MDCard:
+            size_hint: 0.7, 0.4
+            pos_hint: {"center_x": .5, "center_y": .25}
+            MDLabel:
+                text: "Choose my own recipes"
+                pos_hint: {"center_x": .5, "center_y": .85}
+                halign: "center"
+                font_style: "Subtitle2"
+        Image:
+            source: 'pick.png'
+            size_hint: 0.2,0.2
+            pos_hint: {"center_x": 0.5, "center_y": 0.25}
+        #Button for random generate recipe
+        MDFillRoundFlatButton:
+            text: ">"
+            pos_hint: {"center_x": .5, "center_y": .1}
+            theme_text_color: "Custom"
+            text_color: (1,1,1,1)
+            md_bg_color: (0.976,0.43,0.27)
+            on_release: 
+                app.root.current = "ChosenRecipe"
+                root.manager.transition.direction = "left"
+       #Button to choose own recipes
+        MDFillRoundFlatButton:
+            text: ">"
+            pos_hint: {"center_x": .5, "center_y": .55}
+            theme_text_color: "Custom"
+            text_color: (1,1,1,1)
+            md_bg_color: (0.976,0.43,0.27)
+            on_release: 
+                app.root.current = "RandomRecipe"
+                root.manager.transition.direction = "left"
+        MDRoundFlatButton:
+            padding: "10dp"
+            text: "<"
+            pos_hint: {"center_x": .2, "center_y": .95}
+            font_style: "Subtitle1"
+            text_color: (0,0,0)
+            line_color: (1,1,1)
+            line_width: 1
+            on_release: 
+                app.root.current = "GenerateList"
+                root.manager.transition.direction = "right"
+
+<RandomRecipe>:
+    name: "RandomRecipe"
+    FloatLayout:
+        MDRoundFlatButton:
+            padding: "10dp"
+            text: "<"
+            pos_hint: {"center_x": .2, "center_y": .95}
+            font_style: "Subtitle1"
+            text_color: (0,0,0)
+            line_color: (1,1,1)
+            line_width: 1
+            on_release: 
+                app.root.current = "ListSelection"
+                root.manager.transition.direction = "right"
+        MDLabel:
+            font_style: "Subtitle2"
+            text: "Create Random List"
+            halign: "center"
+            pos_hint: {"center_y": .95}
+        MDLabel:
+            font_style: "Subtitle2"
+            text: "Choose number of meals:"
+            halign: "center"
+            pos_hint: {"center_x":0.3,"center_y": .8}
+        MDDropDownItem:
+            id: dropdown_item
+            text: "1"
+            pos_hint: {"center_x": .5, "center_y": .6}
+            current_item: "1"
+            on_release: root.menu.open()
+        MDFillRoundFlatButton:
+            text: "Generate"
+            pos_hint: {"center_x": .5, "center_y": .1}
+            theme_text_color: "Custom"
+            text_color: (1,1,1,1)
+            md_bg_color: (0.976,0.43,0.27)
+            on_release: 
+                app.root.current = "FinalListRand"
+                root.manager.transition.direction = "left"
+
+<ChosenRecipe>:
+    name: "ChosenRecipe"
+
+<FinalListRand>:
+    name: "FinalListRand"
+    FloatLayout:
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_y: 0.95
+            ScrollView:
+                do_scroll_x: False
+                id: rand_list_container
+        MDRoundFlatButton:
+            padding: "10dp"
+            text: "<"
+            pos_hint: {"center_x": .2, "center_y": .95}
+            font_style: "Subtitle1"
+            text_color: (0,0,0)
+            line_color: (1,1,1)
+            line_width: 1
+            on_release: 
+                app.root.current = "GenerateList"
+                root.manager.transition.direction = "right"
+        MDLabel:
+            font_style: "Subtitle2"
+            text: "Shopping List"
+            halign: "center"
+            pos_hint: {"center_y": .95}    
