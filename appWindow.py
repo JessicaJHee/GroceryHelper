@@ -1,5 +1,9 @@
+import random
+import json
+from re import I
 import kivy
-from kivy.app import App #this is the main app class that builds the window and handles the graphics
+# this is the main app class that builds the window and handles the graphics
+from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.app import MDApp
@@ -24,65 +28,91 @@ from kivy.uix.image import AsyncImage
 
 Window.clearcolor = (0.98, 0.98, 0.98, 1)
 
-#------------------------------logic---------------------------------
-import json
-import random
+# ------------------------------logic---------------------------------
 
-#initialize dictionary 
+# initialize global variables
 rand_recipe_count = "none"
 recipe_book = {}
-ingredients_chosen ={}
+ingredients_chosen = {}
 
 
-#------------------------------kivy---------------------------------
+# ------------------------------kivy---------------------------------
 
-class Grocerys(MDApp):# inherets from App
+class Grocerys(MDApp):  # inherets from App
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.theme_cls.primary_palette = "DeepPurple"
 
+    def build(self):  # this is the main interface of the app
+        return Builder.load_file("grocery.kv")  # what is inside the window?
 
-    def build(self): #this is the main interface of the app
-        return Builder.load_file("grocery.kv") #what is inside the window?
+# manages all the screens
+
 
 class WindowManager(ScreenManager):
     GenerateList = ObjectProperty(None)
 
+# screen that displays the ingredients within a certain recipe
+
+
 class ViewRecipe(Screen):
-    pass
+    # insert each ingredient based on the global variable of chosen ingredients
+    def on_enter(self, *args):
+        layout = FloatLayout()
+        self.add_widget(layout)
+        # add ingredients list
+        listLayout = GridLayout(
+            cols=2, padding=40, row_force_default=True, row_default_height=45)
+        for key in ingredients_chosen:
+            listLayout.add_widget(MDLabel(text=key))
+            checkbox = MDCheckbox(on_active=self.checkbox_clicked)
+            listLayout.add_widget(checkbox)
+        layout.add_widget(listLayout)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Clock.schedule_once(self.on_enter)
+
+    def checkbox_clicked(self, *args):  # value holds the state of the checkbox
+        pass
+
+# overlooking screen that calls for new pages whenever a new recipe/list is generated
+
+
 class GenerateList(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Clock.schedule_once(self.generate_list)
 
     def generate_list(self, *args):
+        # load database
         with open("grocery_store.json") as f:
             recipe_book = json.load(f)
+        # Insert the name of the recipe and the number of recipes it contains
         for key in recipe_book.keys():
             self.list_item = TwoLineAvatarIconListItem(text=f"{key}",
-            secondary_text= str(len(recipe_book[key])) + ' ingredients', 
-            on_release = lambda x=key: self.pressed(x))
-            #add new page
-            screen = NewPage(name= key)
-            App.get_running_app().root.add_widget(screen)  
+                                                       secondary_text=str(
+                                                           len(recipe_book[key])) + ' ingredients',
+                                                       on_release=lambda x=key: self.pressed(x))
+            # add new page
+            screen = NewPage(name=key)
+            App.get_running_app().root.add_widget(screen)
             self.ids.container.add_widget(self.list_item)
-    
+
+    # go to the new page created by NewPage
     def pressed(self, screen_name):
         App.get_running_app().root.current = screen_name.text
         App.get_running_app().root.transition.direction = "left"
-    
-class ListSelection(Screen):
-    pass
-class RecipeList(Screen):
-    pass
-class ChosenRecipe(Screen):
-    pass
+
+
+# screen for random recipe that asks for the desired number of recipes
 class RandomRecipe(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Clock.schedule_once(self.on_enter)
 
     def on_enter(self, *args):
+        # add the drop down menu
         menu = None
         menu_items = [
             {
@@ -91,7 +121,7 @@ class RandomRecipe(Screen):
                 "text": f"{i}",
                 "on_release": lambda x=f"{i}": self.set_item(x),
             }
-            for i in range(1,8)
+            for i in range(1, 8)
         ]
         self.menu = MDDropdownMenu(
             caller=self.ids.dropdown_item,
@@ -100,6 +130,8 @@ class RandomRecipe(Screen):
             width_mult=4,
         )
         self.menu.bind()
+
+    # function to set the item in the drop down menu
     def set_item(self, text_item):
         global rand_recipe_count
         self.ids.dropdown_item.set_item(text_item)
@@ -107,42 +139,48 @@ class RandomRecipe(Screen):
         self.menu.dismiss()
         return rand_recipe_count
 
+# generate and display the list generated by random selection
+
 
 class FinalListRand(Screen):
     def on_enter(self, *args):
-        #load ingredient list
+        # load ingredient list
         with open("grocery_store.json") as f:
             recipe_book = json.load(f)
 
         rand_list = {}
-        ingredients_chosen = {}
+        global ingredients_chosen
+        # append the selected amount of random recipes to rand_list based on the rand_recipe_count inputed by user
         if rand_recipe_count != 'none':
-            for x in range (0, int(rand_recipe_count)):
+            for x in range(0, int(rand_recipe_count)):
                 rand_list[x] = random.choice(list(recipe_book.keys()))
-                for name,ing in recipe_book.items():
+                for name, ing in recipe_book.items():
                     for key in ing:
                         if (name == rand_list[x]):
                             ingredients_chosen[key] = ing[key]
-        print(rand_list)
-        print("tttttttttttttttttttttttttttttttttttt")        
-        print(ingredients_chosen)
+        # initialize layout
         layout = FloatLayout()
         self.add_widget(layout)
-        #add ingredients list
-        listLayout = GridLayout(cols=2, padding = 40, row_force_default=True, row_default_height = 45)
+        # add ingredients list to layout
+        listLayout = GridLayout(
+            cols=2, padding=40, row_force_default=True, row_default_height=45)
         for key in ingredients_chosen:
-            listLayout.add_widget(MDLabel(text = key))
-            checkbox = MDCheckbox(on_active = self.checkbox_clicked)
+            listLayout.add_widget(MDLabel(text=key))
+            checkbox = MDCheckbox(on_active=self.checkbox_clicked)
             listLayout.add_widget(checkbox)
         layout.add_widget(listLayout)
 
+        return ingredients_chosen
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Clock.schedule_once(self.on_enter)  
+        Clock.schedule_once(self.on_enter)
 
-    def checkbox_clicked (self, *args): #value holds the state of the checkbox
-        print ("test")
-        
+    def checkbox_clicked(self, *args):  # value holds the state of the checkbox
+        pass
+
+# write to the json file whenever a new recipe is added
+
 
 class AddRecipe(Screen):
     recipename = ObjectProperty(None)
@@ -153,90 +191,114 @@ class AddRecipe(Screen):
         recipe_name = self.recipename.text
         ingredient_list = self.ingredients.text
         ingredients = ingredient_list.splitlines()
-        #load json file
+        # load json file
         with open("grocery_store.json") as f:
             recipe_book = json.load(f)
-        recipe_book [recipe_name] = {}
+        recipe_book[recipe_name] = {}
         for ingredient in ingredients:
             unit = 0
-            recipe_book [recipe_name][ingredient] = unit
+            recipe_book[recipe_name][ingredient] = unit
             if ingredient == " ":
-                del recipe_book [recipe_name][ingredient]
-        #update the json file new entry
+                del recipe_book[recipe_name][ingredient]
+        # update the json file new entry
         with open("grocery_store.json", "w") as write_file:
             json.dump(recipe_book, write_file, indent=2)
-        
+
+# screen creating new page for new recipe inputted
+
+
 class NewPage(Screen):
     def __init__(self, **kwargs):
         Screen.__init__(self, **kwargs)
         layout = FloatLayout()
         self.add_widget(layout)
-        #add label
-        recipeName = MDLabel(font_style= "Subtitle2"
-            ,text =  self.name
-            ,halign = "center"
-            ,pos_hint = {"center_y": .95})
+        # add label
+        recipeName = MDLabel(font_style="Subtitle2", text=self.name,
+                             halign="center", pos_hint={"center_y": .95})
         layout.add_widget(recipeName)
-        
-        #load ingredient list
+
+        # load ingredient list
         with open("grocery_store.json") as f:
             recipe_book = json.load(f)
+        # load new recipe into the json database
         ingredients_chosen = {}
-        for name,ing in recipe_book.items():
+        for name, ing in recipe_book.items():
             for key in ing:
                 if (name == self.name):
-                    ingredients_chosen[key] = ing[key] 
-        
-        #add ingredients list
-        listLayout = GridLayout(cols=2, padding = 40, row_force_default=True, row_default_height = 45) 
-        for key in ingredients_chosen: 
-            listLayout.add_widget(MDLabel(text = key))
-            checkbox = MDCheckbox(on_active = self.checkbox_clicked)
+                    ingredients_chosen[key] = ing[key]
+
+        # add ingredients list
+        listLayout = GridLayout(
+            cols=2, padding=40, row_force_default=True, row_default_height=45)
+        for key in ingredients_chosen:
+            listLayout.add_widget(MDLabel(text=key))
+            checkbox = MDCheckbox(on_active=self.checkbox_clicked)
             listLayout.add_widget(checkbox)
-        #add checkboxes 
+        # add checkboxes
         layout.add_widget(listLayout)
-        #add back button
-        button = MDRoundFlatButton(text='<',padding= "10dp",pos_hint= {"center_x": .2, "center_y": .95}, 
-        font_style= "Subtitle1", text_color= (0,0,0), line_color= (1,1,1), line_width= 1)
+        # add back button
+        button = MDRoundFlatButton(text='<', padding="10dp", pos_hint={"center_x": .2, "center_y": .95},
+                                   font_style="Subtitle1", text_color=(0, 0, 0), line_color=(1, 1, 1), line_width=1)
         layout.add_widget(button)
-        button.bind(on_release = self.switch_screen)
-    def checkbox_clicked (self, *args): #value holds the state of the checkbox
-        print ("test")
+        button.bind(on_release=self.switch_screen)
+
+    def checkbox_clicked(self, *args):  # value holds the state of the checkbox
+        pass
 
     def switch_screen(self, *args):
         App.get_running_app().root.current = "GenerateList"
         App.get_running_app().root.transition.direction = "right"
 
-def load_all(layout,self):
-    #first item in row
-    response1 = requests.get('https://api.spoonacular.com/recipes/random?number=1&apiKey=635fd284d78141c4b057f2faf20b02a3')
-    #for x in range(0, len(response1.json()['recipes'][0]['extendedIngredients'])):
-        #print(response1.json()['recipes'][0]['extendedIngredients'][x]['original'])
-    layout.add_widget(AsyncImage(source = response1.json()['recipes'][0]['image']))
-    #second item in row
-    response2 = requests.get('https://api.spoonacular.com/recipes/random?number=1&apiKey=635fd284d78141c4b057f2faf20b02a3')
-    #for x in range(0, len(response1.json()['recipes'][0]['extendedIngredients'])):
-        #print(response1.json()['recipes'][0]['extendedIngredients'][x]['original'])
-    layout.add_widget(AsyncImage(source = response2.json()['recipes'][0]['image']))
-    #first item name
-    recipeName1 = MDLabel(font_style= "Subtitle2"
-        ,text = response1.json()['recipes'][0]['title']
-        ,halign = "center")
+# function to load the explore page from API and add the recipe name and image
+
+
+def load_all(layout, self):
+    # first item in row
+    response1 = requests.get(
+        'https://api.spoonacular.com/recipes/random?number=1&apiKey=635fd284d78141c4b057f2faf20b02a3')
+    # for x in range(0, len(response1.json()['recipes'][0]['extendedIngredients'])):
+    # print(response1.json()['recipes'][0]['extendedIngredients'][x]['original'])
+    layout.add_widget(AsyncImage(
+        source=response1.json()['recipes'][0]['image']))
+    # second item in row
+    response2 = requests.get(
+        'https://api.spoonacular.com/recipes/random?number=1&apiKey=635fd284d78141c4b057f2faf20b02a3')
+    # for x in range(0, len(response1.json()['recipes'][0]['extendedIngredients'])):
+    # print(response1.json()['recipes'][0]['extendedIngredients'][x]['original'])
+    layout.add_widget(AsyncImage(
+        source=response2.json()['recipes'][0]['image']))
+    # first item name
+    recipeName1 = MDLabel(font_style="Subtitle2", text=response1.json()[
+                          'recipes'][0]['title'], halign="center")
     layout.add_widget(recipeName1)
-    #second item name
-    recipeName2 = MDLabel(font_style= "Subtitle2"
-        ,text = response2.json()['recipes'][0]['title']
-        ,halign = "center")
+    # second item name
+    recipeName2 = MDLabel(font_style="Subtitle2", text=response2.json()[
+                          'recipes'][0]['title'], halign="center")
     layout.add_widget(recipeName2)
+
+# initiate the explore page
+
 
 class Explore(Screen):
     def __init__(self, **kwargs):
         Screen.__init__(self, **kwargs)
-        layout = GridLayout(cols = 2, rows = 6, padding = [0,60,0,20])
+        layout = GridLayout(cols=2, rows=6, padding=[0, 60, 0, 20])
         self.add_widget(layout)
-        #for x in range (0,3):
-            #load_all(layout, self)      
+        for x in range(0, 3):
+            load_all(layout, self)
+
+
+class ListSelection(Screen):
+    pass
+
+
+class RecipeList(Screen):
+    pass
+
+
+class ChosenRecipe(Screen):
+    pass
 
 
 if __name__ == "__main__":
-    Grocerys().run() # the .run method is inhereted from the App class into MyApp
+    Grocerys().run()  # the .run method is inhereted from the App class into MyApp

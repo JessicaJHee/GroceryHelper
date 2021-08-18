@@ -85,6 +85,28 @@ WindowManager:
             app.root.current = "GenerateList"
             root.manager.transition.direction = "left"
             
+
+<ViewRecipe>:
+    name: "ViewRecipe"
+    FloatLayout:
+        MDLabel:
+            font_style: "Subtitle2"
+            text: "Current List"
+            halign: "center"
+            pos_hint: {"center_y": .95}
+        MDRoundFlatButton:
+            padding: "10dp"
+            text: "<"
+            pos_hint: {"center_x": .2, "center_y": .95}
+            font_style: "Subtitle1"
+            text_color: (0,0,0)
+            line_color: (1,1,1)
+            line_width: 1
+            on_release: 
+                app.root.current = "GenerateList"
+                root.manager.transition.direction = "right"
+
+
 <GenerateList>: 
     name:"GenerateList"
     MDBottomNavigation:
@@ -126,7 +148,7 @@ WindowManager:
                     theme_text_color: "Custom"
                     text_color: (0.976,0.43,0.27,1)
                     on_release:
-                        app.root.current = "FinalListRand"
+                        app.root.current = "ViewRecipe"
                         root.manager.transition.direction = "left"
         MDBottomNavigationItem:
             name: "RecipeList"
@@ -308,8 +330,11 @@ WindowManager:
 
 <FinalListRand>:
     name: "FinalListRand"
+    on_pre_enter:
+        sign.canvas.clear()
     FloatLayout:
         BoxLayout:
+            id: sign
             orientation: "vertical"
             size_hint_y: 0.95
             ScrollView:
